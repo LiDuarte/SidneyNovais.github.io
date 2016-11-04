@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+</head>
+<body>
+	<style>
+		*{
+			margin:0px auto;
+			padding: 0px;
+		}
+		canvas {
+			background:#000;
+		}
+	</style>
+	<script>
+
+		// Variaveis
+		var canvas, ctx, imgPlayer, imgEnemy, up = down = space = false;
+
+		imgPlayer = new Image();
+		imgEnemy = new Image();
+		imgPlayer.src = "player.png";
+		imgEnemy.src = "enemy.png";
+
+		player = {
+			spr: imgPlayer,
+			x: 20,
+			y: 20,
+			width: 50,
+			height: 50,
+			time: 0,
+			side: 10,
+			//Metodos
+			draw: function() {
+				ctx.drawImage(this.spr,0,0,this.width,this.height,this.x,this.y,this.width,this.height);
+			},
+
+			update: function() {
+				if(up == true){
+					this.step(-5);
+				}if(down  == true){
+					this.step(5);
+				}if(space == true){
+					if(this.time == 0 ){
+						this.shot(this.side);
+						this.time++;
+
+					} else {
+						this.time++;
+						if(this.time >= 20){
+							this.time = 0;
+							if(this.side == 10){
+								this.side = 37;
+							} else{
+								this.side = 10;
+							}
+						}
+					}
+				}
+			},
+
+			step: function(step) {
+				this.y += step;
+			},
+
+			shot: function(s) {
+				playerBullet.insert(s);
+			}
+		};
+
+		enemy = {
+			e: [],
+			spr: imgEnemy,
+			x: 600,
+			y: 50,
+			width:50,
+			height:50,
+			time: 0,
+
+			draw: function() {
+				
+				for(i = 0, tam = this.e.length; i < tam; i++){
+					var eny = this.e[i];
+					ctx.drawImage(this.spr,0,0,this.width,this.height,eny.x,eny.y,eny.width,eny.height);
+				}
+				
+			},
+
+			insert: function() {
+				if(this.time == 0){
+					this.time++;
+					this.e.push({
+						x: canvas.width - 20,
+						y: Math.floor(Math.random() * canvas.height),
+						width: this.width,
+						height: this.height
+					});
+				} else {
+					this.time++;
+					if(this.time >= 300){
+						this.time = 0;
+					}
+				}
+			},
+
+			step: function() {
+				for(i = 0, tam = this.e.length; i < tam; i++){
+					var eny = this.e[i];
+					eny.x -= 2;
+					if(eny.x + eny.width <= 0){
+						this.e.splice(i,1);
+						tam--;
+						i--;
+					}
+				}
+			},
+
+			colision: function() {
+				for(i = 0, tam = this.e.length;i < tam; i++){
+					var eny = this.e[i];
+					for(j = 0, tamj = playerBullet.b.length;j < tamj; j++){
+						var bul = playerBullet.b[j];
+						if(bul.x + bul.width > eny.x && (bul.y + bul.height > eny.y && bul.y < eny.y + eny.height))
+						{	
+							playerBullet.b.splice(j,1)
+							tamj--;
+							j--;
+							this.e.splice(i,1);
+							tam--;
+							i--;
+						}
+					}
+				}
+			}
+		};
+
+		playerBullet = new Bullet(7,3);
+
+		function Bullet(width,height) {
+			this.b = [];
+			this.x;
+			this.y;
+			this.width = width;
+			this.height = height;
+
+			this.setPlayerXY = function() {
+				this.x = player.x + 10;
+				this.y = player.y;
+			}
+			this.insert = function(z) {
+				this.setPlayerXY();
+				this.b.push({
+					x:this.x,
+					y:this.y + z,
+					width:this.width,
+					height:this.height
+				});
+			};
+
+			this.update = function() {
+				for(i=0,tam = this.b.length;i < tam;i++){
+					var bulle = this.b[i];
+					bulle.x += 10;
+				}
+			};
+
+
+			this.draw = function() {
+				if(this.b.length > 0){
+					for(i=0,tam = this.b.length;i < tam;i++){
+						var bulle = this.b[i];
+						ctx.fillStyle = "#fff";
+						ctx.fillRect(bulle.x,bulle.y,bulle.width,bulle.height);
+						if(bulle.x > canvas.width){
+							this.b.splice(i,1);
+							tam--;
+							i--;
+						}
+					}
+				}
+			}
+		};
+
+		window.addEventListener("keydown",function(e){
+			var key = e.keyCode;
+			switch(key){
+				case 32: space = true;
+						 break;
+				case 38: up = true;
+						 break;
+				case 40: down = true;
+						 break;
+			}
+		});
+
+		window.addEventListener("keyup",function(e){
+			var key = e.keyCode;
+			switch(key){
+				case 32: space = false;
+						 break;
+				case 38: up = false;
+						 break;
+				case 40: down = false;
+						 break;
+			}
+		});
+
+		function init() {
+
+			canvas = document.createElement("canvas");
+			canvas.width = window.innerWidth;
+			canvas.height = 300;
+
+			document.body.appendChild(canvas);
+
+			ctx = canvas.getContext("2d");
+			loop();
+
+		}
+		function draw() {
+			ctx.fillStyle = "#000";
+			ctx.fillRect(0,0,canvas.width,canvas.height);
+			player.draw();
+			enemy.draw();
+			playerBullet.draw();
+		}
+
+		function update() {
+			enemy.colision();
+			player.update();
+			playerBullet.update();
+			enemy.insert()
+			enemy.step();
+		}
+
+		function loop() {
+			window.requestAnimationFrame(loop);
+			update();
+			draw();
+		}
+
+		init();
+		
+	</script>
+	
+</body>
+</html>
