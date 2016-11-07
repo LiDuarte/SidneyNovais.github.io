@@ -1,31 +1,35 @@
 (function() {
-		var left = up = right = down = space = pause = false;
-		var spritePlayer = new Image();
-			spritePlayer.src = "player.png";
-		var spriteEnemy = new Image();
-			spriteEnemy.src = "enemy.png";
-		var canvas = new Canvas(window.innerWidth,300);
-		var ctx = canvas.create();
+		var highScore = 0;
+		canvas = new Canvas(window.innerWidth,300);
+		ctx = canvas.create();
 
-		var stage = new Stage(canvas.width,canvas.height);
+		stage = new Stage(canvas.width,canvas.height);
+		function init() {
+			 left = up = right = down = space = pause = false;
+			 score = 0;
+			 spritePlayer = new Image();
+				spritePlayer.src = "player.png";
+			 spriteEnemy = new Image();
+				spriteEnemy.src = "enemy.png";
 
-		var player = [new Player(10,10,spritePlayer)];
-		var playerBullets = [];
-		var enemyBullets = [];
-		var enemys = [];
-		var enemy = [new Enemy(1200,10,spriteEnemy)];
-		var timeCreate = 0;
+			 player = [new Player(10,10,spritePlayer)];
+			 playerBullets = [];
+			 enemyBullets = [];
+			 enemys = [];
+				 timeCreate = 0;
 
-		var levelGame = {
-			nextLevelPoints: 40,
-			pointsForLevel: 5,
-			respawEnemys: 120,
-			timeShotEnemys: 150,
-			speedEnemys: 3
+				 levelGame = {
+				nextLevelPoints: 40,
+				pointsForLevel: 5,
+				respawEnemys: 120,
+				timeShotEnemys: 150,
+				speedEnemys: 3
+			}
+
+				 statusPlayer = player[0].status;
+				 playerPlane = player[0].plane;
 		}
-
-			var statusPlayer = player[0].status;
-			var playerPlane = player[0].plane;
+			init();
 			// EVENTS LEFT, UP, RIGHT , DOWN
 			window.addEventListener("keydown",function(e){
 				var key = e.keyCode;
@@ -54,6 +58,34 @@
 						case 40: down = false;break;
 					}
 			},false);
+
+			window.addEventListener("click",function(e){
+				
+				if((e.x > stage.x && e.x < stage.x + stage.width) && (e.y > stage.y && stage.y < stage.y + stage.height) && (player.length == 0))
+					init();
+
+				
+			},false);
+
+		function defeat() {
+			ctx.fillStyle = "#000";
+			ctx.fillRect(stage.x,stage.y,stage.width,stage.height);
+			ctx.fillStyle = "#FFF";
+			ctx.font = "60px arial";
+			ctx.fillText("Você perdeu!",(stage.width / 2) - 140,stage.height / 2);
+			ctx.font = "20px arial";
+			ctx.fillText("Pontos: "+score,(stage.width / 2) - 140,(stage.height / 2) + 30);
+			ctx.fillText("Record: "+highScore,(stage.width / 2) + 140,(stage.height / 2) + 30);
+			ctx.fillText("Jogar Novamente!",(stage.width / 2)-35,(stage.height / 2) + 80);
+
+		}
+
+		function desenhaPlcar() {
+			ctx.fillStyle = "#FFF";
+			ctx.font = "20px arial"
+			ctx.fillText("Pontos: "+player[0].score,10,20);
+		}
+
 		function createEnemys(arrayEnemys){
 			
 			arrayEnemys.push(new Enemy(stage.x + stage.width,Math.floor(Math.random() * 260),spriteEnemy));
@@ -214,6 +246,7 @@
 			drawPlanes();
 			drawBullets(playerBullets,ctx);
 			drawBullets(enemyBullets,ctx);
+			desenhaPlcar();
 		}
 
 		function updateAll() {
@@ -227,12 +260,14 @@
 			if(pontos){
 				var element = document.getElementById("pontos");
 				player[0].scoreUp(levelGame.pointsForLevel);
-				element.innerHTML = player[0].score;
+				score = player[0].score;
+				if(score> highScore)
+					highScore = score;
 			}
 
 			if(player[0].score > levelGame.nextLevelPoints){
 				levelGame.nextLevelPoints = levelGame.nextLevelPoints * 2;
-				levelGame.pointsForLevel+= 5;//
+				levelGame.pointsForLevel+= 5;
 				levelGame.respawEnemys += -15;
 				if(levelGame.speedEnemys != 5)
 					levelGame.speedEnemys += 1;
@@ -243,12 +278,15 @@
 			console.log(levelGame.pointsForLevel);
 
 			updateClearBulletsColisionEnemys(enemyBullets,player);
+
 		}
 
 		function loop() {
 				window.requestAnimationFrame(loop);
 				if(pause == true){
 					return 0;
+				} else if(player.length == 0) {
+					defeat();
 				} else {
 					timeCreate++;
 					if(timeCreate > levelGame.respawEnemys){
@@ -258,7 +296,8 @@
 					drawAll();
 					updateAll();
 				}
-		}
+
+			}
 		loop();
 				
 })();
