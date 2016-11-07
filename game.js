@@ -232,7 +232,7 @@
 
 			if(player[0].score > levelGame.nextLevelPoints){
 				levelGame.nextLevelPoints = levelGame.nextLevelPoints * 2;
-				levelGame.pointsForLevel+= 100;
+				levelGame.pointsForLevel+= 5;
 				levelGame.respawEnemys += -15;
 				if(levelGame.speedEnemys != 5)
 					levelGame.speedEnemys += 1;
