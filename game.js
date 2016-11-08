@@ -80,7 +80,7 @@
 
 		}
 
-		function desenhaPlcar() {
+		function drawScore() {
 			ctx.fillStyle = "#FFF";
 			ctx.font = "20px arial"
 			ctx.fillText("Pontos: "+player[0].score,10,20);
@@ -246,7 +246,7 @@
 			drawPlanes();
 			drawBullets(playerBullets,ctx);
 			drawBullets(enemyBullets,ctx);
-			desenhaPlcar();
+			drawScore();
 		}
 
 		function updateAll() {
