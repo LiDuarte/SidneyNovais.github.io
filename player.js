@@ -3,7 +3,7 @@ function Player(X,Y,SPRITE) {
 	this.y = Y;
 	this.status = 1; // 0 DEAD 1 LIVE
 	this.score = 0;
-	this.plane = new Airplane(this.x,this.y,50,50,3,SPRITE,30);
+	this.plane = new Airplane(this.x,this.y,43,46,3,SPRITE,30);
 
 	//ESPECIAL METHODS
 	this.getX = function() {
