@@ -3,7 +3,7 @@ function Bullet(X,Y,WIDTH,HEIGHT) {
 	this.y = Y;
 	this.width = WIDTH;
 	this.height = HEIGHT;
-	this.speed = 10;
+	this.speed = 15;
    	//METHODS
 
 	this.left = function() {
