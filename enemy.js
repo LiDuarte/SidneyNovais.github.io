@@ -2,7 +2,7 @@ function Enemy(X,Y,SPRITE) {
 	this.x = X;
 	this.y = Y;
 	this.status = 1; // 0 DEAD 1 LIVE
-	this.plane = new Airplane(this.x,this.y,50,50,3,SPRITE,150);
+	this.plane = new Airplane(this.x,this.y,44,32,3,SPRITE,150);
 
 	this.left = function() {
 		var plane = this.plane;
