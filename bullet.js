@@ -14,7 +14,7 @@ function Bullet(X,Y,WIDTH,HEIGHT) {
 	}
 
 	this.drawBullet = function(ctx) {
-		ctx.fillStyle = "#FFF";
+		ctx.fillStyle = "#000";
 		ctx.fillRect(this.x,this.y,this.width,this.height);
 	}
 		
