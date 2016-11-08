@@ -117,7 +117,7 @@
 		}
 
 		function drawBackground() {
-			ctx.fillStyle = "#000";
+			ctx.fillStyle = "#8ACBF5";
 			ctx.fillRect(stage.x,stage.y,stage.width,stage.height);
 		}
 
