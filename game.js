@@ -61,7 +61,7 @@
 
 			window.addEventListener("click",function(e){
 				
-				if((e.x > stage.x && e.x < stage.x + stage.width) && (e.y > stage.y && stage.y < stage.y + stage.height) && (player.length == 0))
+				if((e.y < stage.height) && (player.length == 0))
 					init();
 
 				
