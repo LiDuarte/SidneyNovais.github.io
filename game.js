@@ -275,7 +275,6 @@
 					levelGame.timeShotEnemys += -3;
 
 			}
-			console.log(levelGame.pointsForLevel);
 
 			updateClearBulletsColisionEnemys(enemyBullets,player);
 
